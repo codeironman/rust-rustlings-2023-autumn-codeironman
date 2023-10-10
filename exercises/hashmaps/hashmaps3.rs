@@ -50,8 +50,8 @@ fn build_scores_table(results: String) -> HashMap<String, Team> {
                 goals_conceded:team_1_score});
         }
         else {
-            let temp = scores.get_mut(&team_1_name).unwrap().goals_scored;
-            *temp += team_1_score;
+            let mut temp = scores.get_mut(&team_1_name).unwrap().goals_scored;
+            temp += team_1_score;
         }
 
     }
