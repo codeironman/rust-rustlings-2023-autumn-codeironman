@@ -31,7 +31,6 @@ enum ParsePersonError {
     ParseInt(ParseIntError),
 }
 
-// I AM NOT DONE
 
 // Steps:
 // 1. If the length of the provided string is 0, an error should be returned
@@ -51,7 +50,35 @@ enum ParsePersonError {
 
 impl FromStr for Person {
     type Err = ParsePersonError;
+
     fn from_str(s: &str) -> Result<Person, Self::Err> {
+        if s.is_empty() {
+            // Step 1: Return Empty error if string is empty
+            Err(ParsePersonError::Empty)
+        } else {
+            let parts: Vec<&str> = s.split(',').collect();
+            if parts.len() != 2 {
+                // Step 3: Return BadLen error if string doesn't contain exactly one comma
+                Err(ParsePersonError::BadLen)
+            } else {
+                let name = parts[0].to_string();
+                if name.is_empty() {
+                    // Step 4: Return NoName error if name is empty
+                    Err(ParsePersonError::NoName)
+                } else {
+                    match parts[1].parse::<usize>() {
+                        Ok(age) => {
+                            // Return Person object with provided name and age
+                            Ok(Person { name, age })
+                        }
+                        Err(e) => {
+                            // Step 6: Return ParseInt error if age parsing fails
+                            Err(ParsePersonError::ParseInt(e))
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -59,6 +86,7 @@ fn main() {
     let p = "Mark,20".parse::<Person>().unwrap();
     println!("{:?}", p);
 }
+
 
 #[cfg(test)]
 mod tests {
